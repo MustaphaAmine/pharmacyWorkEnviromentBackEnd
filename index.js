@@ -5,14 +5,10 @@ const cryptage = require('./cryptage/cryptage');
 const user = require('./models/user');
 const commune = require('./models/commune');
 const pharmacy = require('./models/pharmacy');
-
-
-
-
 const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
-
+port = process.env.PORT || 3000
 //connect to mongodb
 mongoose.connect('mongodb+srv://mustapha:mustaphadebbih@easypharma-uv4ka.mongodb.net/test?retryWrites=true',{useNewUrlParser:true});
 
@@ -86,8 +82,6 @@ app.get("/users/:phone/:pwd",(req,res,next)=>{
         }else{
             res.status(200).json('false');
         }
-        //res.status(200).json(user);
-        //console.log(user.firstname);
     });
 });
 
@@ -103,7 +97,7 @@ app.get("/pharmacies/:nomCommune",function(req,res){
 
     pharmacy.find({nomCommune:nomcommune},'-_id nomPrenomPharmacien heure adresse numeroTelephone facebookUrl lienSurCarte caisseConventionnee dateGarde',
     function(err,pharmacie){
-        res.status(200).json(pharmacie);
+    res.status(200).json(pharmacie);
     });
 });
 
@@ -122,5 +116,6 @@ app.get("/pharmacies/:nomCommune",function(req,res){
 });*/
 
 
-app.listen(3000);
-console.log("your are listening on port 3000");
+app.listen(port,function(){
+    console.log("your are listening on port 3000");
+});
