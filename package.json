@@ -1,0 +1,21 @@
+{
+  "name": "easypharma",
+  "version": "1.0.0",
+  "description": "back-end of a pharmacy distribution in a city mobile application",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "keywords": [
+    "yes"
+  ],
+  "author": "mustapha debbih",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "crypto": "^1.0.1",
+    "express": "^4.16.4",
+    "mongoose": "^5.5.3"
+  }
+}
