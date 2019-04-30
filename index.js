@@ -78,9 +78,9 @@ app.get("/users/:phone/:pwd",(req,res,next)=>{
         var hashed_password = cryptage.checkHashPassword(pwd,salt).passwordHash;
         var encrypted_password = user.password;
         if(hashed_password == encrypted_password){
-            res.status(200).json('true');
+            res.status(200).json(true);
         }else{
-            res.status(200).json('false');
+            res.status(200).json(false);
         }
     });
 });
