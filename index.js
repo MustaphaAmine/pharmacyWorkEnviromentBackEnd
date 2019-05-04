@@ -79,8 +79,10 @@ app.get("/users/:phone/:pwd",(req,res,next)=>{
         var encrypted_password = user.password;
         if(hashed_password == encrypted_password){
             res.status(200).json(user);
+            console.log("wrong");
         }else{
             res.status(200).json(null);
+            console.log("true");
         }
     });
 });
@@ -120,20 +122,6 @@ app.get("/pharmacies/:nomCommune",function(req,res){
     res.status(200).json(pharmacie);
     });
 });
-
-
-/*app.get("/users/:id",(req,res,next)=>{
-    const id = req.params.id;
-    user.findById(id)
-    .exec()
-    .then(doc =>{
-        console.log(doc);
-        res.status(200).json(doc);
-    })
-    .catch(err => {
-        console.log(err);
-    res.status(500).json({error:err})});
-});*/
 
 
 app.listen(port,function(){
