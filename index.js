@@ -73,7 +73,7 @@ Pharmacy.save().then(result=>{
 app.get("/users/:phone/:pwd",(req,res,next)=>{
     var phone = req.params.phone;
     var pwd = req.params.pwd;
-    user.find({phone_number:phone},function(error,user){
+    user.findOne({phone_number:phone},function(error,user){
         var salt = user.salt;
         var hashed_password = cryptage.checkHashPassword(pwd,salt).passwordHash;
         var encrypted_password = user.password;
@@ -122,6 +122,20 @@ app.get("/pharmacies/:nomCommune",function(req,res){
     res.status(200).json(pharmacie);
     });
 });
+
+
+/*app.get("/users/:id",(req,res,next)=>{
+    const id = req.params.id;
+    user.findById(id)
+    .exec()
+    .then(doc =>{
+        console.log(doc);
+        res.status(200).json(doc);
+    })
+    .catch(err => {
+        console.log(err);
+    res.status(500).json({error:err})});
+});*/
 
 
 app.listen(port,function(){
