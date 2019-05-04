@@ -78,11 +78,31 @@ app.get("/users/:phone/:pwd",(req,res,next)=>{
         var hashed_password = cryptage.checkHashPassword(pwd,salt).passwordHash;
         var encrypted_password = user.password;
         if(hashed_password == encrypted_password){
-            res.status(200).json(true);
+            res.status(200).json(user);
         }else{
-            res.status(200).json(false);
+            res.status(200).json(null);
         }
     });
+});
+
+app.post('/login',(request,response,next)=>{
+    var phone = request.body.phoneNumber;
+    var pwd = request.body.password;
+     
+    user.find({phone_number:phone},function(error,user){
+        var salt = user.salt;
+        var hashed_password = cryptage.checkHashPassword(pwd,salt).passwordHash;
+        var encrypted_password = user.password;
+        if(hashed_password == encrypted_password){
+            response.json('Login success');
+            console.log('Login success');
+        }else{
+            response.json('password wrong');
+            console.log('password wrong');        
+        }
+    });
+
+
 });
 
 app.get("/communes",function(req,res){
