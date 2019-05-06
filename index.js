@@ -103,8 +103,6 @@ app.post('/login',(request,response,next)=>{
             console.log('password wrong');        
         }
     });
-
-
 });
 
 app.get("/communes",function(req,res){
@@ -121,6 +119,13 @@ app.get("/pharmacies/:nomCommune",function(req,res){
     function(err,pharmacie){
     res.status(200).json(pharmacie);
     });
+});
+
+app.get("/pharmaciegarde/:dategard",function(req,res){
+    var dategard = req.params.dategard;;
+    pharmacy.find({dateGarde:dategard},function(err,pharmacie){
+        res.status(200).json(pharmacie);
+    });   
 });
 
 

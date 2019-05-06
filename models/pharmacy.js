@@ -9,7 +9,7 @@ const pharmacySchema = new mongoose.Schema({
     facebookUrl:String,
     lienSurCarte:String,
     caisseConventionnee:String,
-    dateGarde:String,
+    dateGarde:{String,trim:true},
     versionKey: false
 });
 
