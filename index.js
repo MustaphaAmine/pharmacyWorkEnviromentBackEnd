@@ -60,7 +60,6 @@ var Pharmacy = new pharmacy({
     adresse:req.body.adresse,
     numeroTelephone:req.body.numeroTelephone,
     facebookUrl:req.body.facebookUrl,
-    lienSurCarte:req.body.lienSurCarte,
     caisseConventionnee:req.body.caisseConventionnee,
     dateGarde:req.body.dateGarde
 });
@@ -127,8 +126,6 @@ app.get("/pharmaciegarde/:dategard",function(req,res){
         res.status(200).json(pharmacie);
     });   
 });
-
-
 /*app.get("/users/:id",(req,res,next)=>{
     const id = req.params.id;
     user.findById(id)
