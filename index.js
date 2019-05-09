@@ -20,6 +20,15 @@ app.post('/users',(req,res,next)=>{
     var password = hash_data.passwordHash;
     var salt = hash_data.salt;
 
+    const accountSid = "AC611f2652a8f2262f662a0308bb9f7cd5";
+    const authToken = "7cd41eb1ae681c57c89c0c5178f135de";
+    const fromPhoneNumber = "+12012318756";
+    const toPhoneNumber = req.body.phone_number;
+    const message = "This is your password: " + plaint_password;
+    const client = require('twilio')(accountSid, authToken);
+    
+
+
    const User = new user({
        _id:new mongoose.Types.ObjectId(),
        lastname:req.body.lastname,
@@ -35,6 +44,16 @@ app.post('/users',(req,res,next)=>{
        console.log(result);
        res.status(200).json(result);
     }).catch(err=>console.log(err));
+    
+  
+    client.messages
+      .create({
+         body: message,
+         from: fromPhoneNumber,
+         to: toPhoneNumber
+       })
+      .then(message => console.log(message.sid));
+
 });
 
 
