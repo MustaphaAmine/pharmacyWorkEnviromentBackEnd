@@ -10,7 +10,11 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
 port = process.env.PORT || 3000
 //connect to mongodb
-mongoose.connect('mongodb+srv://mustapha:mustaphadebbih@easypharma-uv4ka.mongodb.net/test?retryWrites=true',{useNewUrlParser:true});
+//mongoose.connect('mongodb+srv://mustapha:mustaphadebbih@easypharma-uv4ka.mongodb.net/test?retryWrites=true',{useNewUrlParser:true});
+
+//New Connection
+// mongodb+srv://mustapha:<password>@pharmacy-dz3jk.mongodb.net/test?retryWrites=true&w=majority
+mongoose.connect('mongodb+srv://mustapha:mustaphadebbih@pharmacy-dz3jk.mongodb.net/test?retryWrites=true&w=majority',{useNewUrlParser:true});
 
 
 //routes
@@ -138,6 +142,13 @@ app.get("/pharmacies/:nomCommune",function(req,res){
     res.status(200).json(pharmacie);
     });
 });
+
+app.get("/pharmacies",function(req,res){
+    pharmacy.find({},'-_id nomPrenomPharmacien heure adresse numeroTelephone facebookUrl lienSurCarte caisseConventionnee dateGarde',
+    function(err,pharmacie){
+    res.status(200).json(pharmacie);
+    });
+})
 
 app.get("/pharmaciegarde/:dategard",function(req,res){
     var dategard = req.params.dategard;;
