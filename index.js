@@ -10,11 +10,11 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
 port = process.env.PORT || 3000
 //connect to mongodb
-mongoose.connect('mongodb+srv://mustapha:mustaphadebbih@easypharma-uv4ka.mongodb.net/test?retryWrites=true',{useNewUrlParser:true});
+//mongoose.connect('mongodb+srv://mustapha:mustaphadebbih@easypharma-uv4ka.mongodb.net/test?retryWrites=true',{useNewUrlParser:true});
 
 //New Connection
 // mongodb+srv://mustapha:<password>@pharmacy-dz3jk.mongodb.net/test?retryWrites=true&w=majority
-//mongoose.connect('mongodb+srv://mustapha:mustaphadebbih@pharmacy-dz3jk.mongodb.net/test?retryWrites=true&w=majority',{useNewUrlParser:true});
+mongoose.connect('mongodb+srv://mustapha:mustaphadebbih@pharmacy-dz3jk.mongodb.net/test?retryWrites=true&w=majority',{useNewUrlParser:true});
 
 
 //routes
