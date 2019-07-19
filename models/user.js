@@ -9,7 +9,7 @@ const userSchema = new mongoose.Schema({
     phone_number:String,
     NSS: Number,
     password:String,
-    salt:String,
+    //salt:String,
     versionKey: false
 });
 

@@ -16,66 +16,48 @@ port = process.env.PORT || 3000
 // mongodb+srv://mustapha:<password>@pharmacy-dz3jk.mongodb.net/test?retryWrites=true&w=majority
 mongoose.connect('mongodb+srv://mustapha:mustaphadebbih@pharmacy-dz3jk.mongodb.net/test?retryWrites=true&w=majority',{useNewUrlParser:true});
 
-
 //routes
+
+
 app.post('/users',(req,res,next)=>{
-    var plaint_password = req.body.password;
-    var hash_data = cryptage.saltHashPassword(plaint_password);
-    var password = hash_data.passwordHash;
-    var salt = hash_data.salt;
-
-   /* const accountSid = "AC611f2652a8f2262f662a0308bb9f7cd5";
-    const authToken = "7cd41eb1ae681c57c89c0c5178f135de";
-    const fromPhoneNumber = "+12012318756";*/
-
+   
     const accountSid = "AC8aef5de6be931e111923732b57831288";
     const authToken = "c0e9cbfc01c2fdfbed17533bf00dd5cc";
     const fromPhoneNumber = "+17729197460";
     const toPhoneNumber = req.body.phone_number;
-    const message = "This is your password: " + plaint_password;
+    const message = "This is your password: " + req.body.password;
     const client = require('twilio')(accountSid, authToken);
-    
-
-
-   const User = new user({
+    const User = new user({
        _id:new mongoose.Types.ObjectId(),
        lastname:req.body.lastname,
        firstname: req.body.firstname,
        email:req.body.email,
        phone_number:req.body.phone_number,
        NSS:req.body.NSS,
-       password:password,
-       salt:salt
+       password:req.body.password,
     });
 
-   User.save().then(result=>{
-       console.log(result);
-       res.status(200).json(result);
-    }).catch(err=>console.log(err));
-    
-  
-    client.messages
-      .create({
-         body: message,
-         from: fromPhoneNumber,
-         to: toPhoneNumber
-       })
-      .then(message => console.log(message.sid));
-
-});
 
 
-app.post("/communes",function(req,res){
-var Commune = new commune({
-    _id:new mongoose.Types.ObjectId(),
-    nomCommune:req.body.nomCommune,
-    codeWilaya:req.body.codeWilaya,
-});
-
-Commune.save().then(result=>{
-    console.log(result);
-    res.status(200).json(result);
-}).catch(err=>console.log(err));
+    user.find({email:req.body.email}, function (err, user) {
+        if (user.length){
+            res.status(200).json({"result":false,"message":"email existe déjà"})
+        }else{
+            User.save().then(result=>{
+                console.log(result);
+                res.status(200).json({"result":true,"message":"Votre compte a été créé avec succé"});
+             }).catch(err=>console.log(err));
+             
+           
+             client.messages
+               .create({
+                  body: message,
+                  from: fromPhoneNumber,
+                  to: toPhoneNumber
+                })
+               .then(message => console.log(message.sid));
+        }
+    });  
 });
 
 app.post("/pharmacy",function(req,res){
@@ -96,24 +78,46 @@ Pharmacy.save().then(result=>{
 }).catch(err=>console.log(err));
 });
 
-app.get("/users/:phone/:pwd",(req,res,next)=>{
-    var phone = req.params.phone;
-    var pwd = req.params.pwd;
-    user.findOne({phone_number:phone},function(error,user){
-        var salt = user.salt;
-        var hashed_password = cryptage.checkHashPassword(pwd,salt).passwordHash;
-        var encrypted_password = user.password;
-        if(hashed_password == encrypted_password){
-            res.status(200).json(user);
-            console.log("wrong");
+
+app.get('/updatePassword/:useremail/:lastpassword/:newpassword',(req,res,next)=>{
+    var useremail = req.params.useremail;
+    var lastpassword = req.params.lastpassword;
+    var newpassword = req.params.newpassword;
+
+    user.updateOne({email:useremail,password:lastpassword},{password:newpassword},function(error,user){
+        if(error){
+            res.status(500).json({"result":false,"message":error});
         }else{
-            res.status(200).json(null);
-            console.log("true");
+            if(user.nModified==0) {
+            res.status(200).json({"result":false,"message":"your email address or password is wrong"});
+               console.log("your email address or password is wrong");
+            }else {
+                res.status(200).json({"result":true,"message":"Votre mot de passe et modifier avec succés"});
+            }
         }
     });
 });
 
-app.post('/login',(request,response,next)=>{
+app.get("/login/:useremail/:pwd",(req,res,next)=>{
+    var useremail = req.params.useremail;
+    var pwd = req.params.pwd;
+    user.findOne({email:useremail},function(error,user){
+        if(error){
+            res.status(500).json({"result":false,"message":"something went wrong with the server"})
+        }else{
+        var userpassword = user.password;
+        if(pwd == userpassword){
+            res.status(200).json({"result":true,"massage":"password compatible with email"});
+            console.log("True");
+        }else{
+            res.status(200).json({"result":false,"message":"you're password or email address is wrong"});
+            console.log("Wrong");
+        }
+    }
+    });
+});
+
+/*app.post('/login',(request,response,next)=>{
     var phone = request.body.phoneNumber;
     var pwd = request.body.password;
      
@@ -130,6 +134,7 @@ app.post('/login',(request,response,next)=>{
         }
     });
 });
+*/
 
 app.get("/communes",function(req,res){
     commune.find({}).select('-_id').exec(function(err,communes){
@@ -160,19 +165,6 @@ app.get("/pharmaciegarde/:dategard",function(req,res){
         res.status(200).json(pharmacie);
     });   
 });
-/*app.get("/users/:id",(req,res,next)=>{
-    const id = req.params.id;
-    user.findById(id)
-    .exec()
-    .then(doc =>{
-        console.log(doc);
-        res.status(200).json(doc);
-    })
-    .catch(err => {
-        console.log(err);
-    res.status(500).json({error:err})});
-});*/
-
 
 app.listen(port,function(){
     console.log("your are listening on port 3000");
