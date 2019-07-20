@@ -5,9 +5,25 @@ const cryptage = require('./cryptage/cryptage');
 const user = require('./models/user');
 const commune = require('./models/commune');
 const pharmacy = require('./models/pharmacy');
+
+const fileUpload = require('express-fileupload');
+const cors = require('cors');
+const morgan = require('morgan');
+const _ = require('lodash');
+
 const app = express();
+
+// enable files upload
+app.use(fileUpload({
+    createParentPath: true
+}));
+//add other middleware
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
+app.use(cors());
+app.use(morgan('dev'));
+
 port = process.env.PORT || 3000
 //connect to mongodb
 //mongoose.connect('mongodb+srv://mustapha:mustaphadebbih@easypharma-uv4ka.mongodb.net/test?retryWrites=true',{useNewUrlParser:true});
@@ -78,7 +94,6 @@ Pharmacy.save().then(result=>{
 }).catch(err=>console.log(err));
 });
 
-
 app.get('/updatePassword/:useremail/:lastpassword/:newpassword',(req,res,next)=>{
     var useremail = req.params.useremail;
     var lastpassword = req.params.lastpassword;
@@ -117,25 +132,6 @@ app.get("/login/:useremail/:pwd",(req,res,next)=>{
     });
 });
 
-/*app.post('/login',(request,response,next)=>{
-    var phone = request.body.phoneNumber;
-    var pwd = request.body.password;
-     
-    user.find({phone_number:phone},function(error,user){
-        var salt = user.salt;
-        var hashed_password = cryptage.checkHashPassword(pwd,salt).passwordHash;
-        var encrypted_password = user.password;
-        if(hashed_password == encrypted_password){
-            response.json('Login success');
-            console.log('Login success');
-        }else{
-            response.json('password wrong');
-            console.log('password wrong');        
-        }
-    });
-});
-*/
-
 app.get("/communes",function(req,res){
     commune.find({}).select('-_id').exec(function(err,communes){
         res.status(200).json(communes);
@@ -164,6 +160,46 @@ app.get("/pharmaciegarde/:dategard",function(req,res){
     pharmacy.find({dateGarde:dategard},function(err,pharmacie){
         res.status(200).json(pharmacie);
     });   
+});
+
+app.post('/upload-avatar', async (req, res) => {
+    try {
+        if(!req.files) {
+            res.send({
+                status: false,
+                message: 'No file uploaded'
+            });
+        } else {
+            //Use the name of the input field (i.e. "avatar") to retrieve the uploaded file
+            let avatar = req.files.avatar;
+            
+            //Use the mv() method to place the file in upload directory (i.e. "uploads")
+            avatar.mv('./uploads/' + avatar.name);
+
+            //send response
+            res.send({
+                status: true,
+                message: 'File is uploaded',
+                data: {
+                    name: avatar.name,
+                    mimetype: avatar.mimetype,
+                    size: avatar.size
+                }
+            });
+        }
+    } catch (err) {
+        res.status(500).send(err);
+    }
+});
+
+app.get('/sendimg/:name', function(req,res){
+    
+    name = req.params.name
+    //if(req.user){
+        res.sendFile('/uploads/'+name, { root: __dirname });
+    /*} else {
+        res.status(401).send('Authorization required!');
+    }*/
 });
 
 app.listen(port,function(){
