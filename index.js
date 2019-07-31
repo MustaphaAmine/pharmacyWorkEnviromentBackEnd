@@ -148,6 +148,43 @@ app.get("/pharmacies/:nomCommune",function(req,res){
     });
 });
 
+app.get("/Communes/:codeWilaya",function(req,res){
+    var codeWilaya = req.params.codeWilaya;
+
+    commune.find({codeWilaya:codeWilaya},'-_id nomCommune codeWilaya',
+    function(err,communes){
+    res.status(200).json(communes);
+    });
+});
+
+
+
+app.get("/Pharmacy/:nomCommune/:dateGarde/:typeConvention",function(req,res){
+    var nomCommune = req.params.nomCommune;
+    var dateGarde = req.params.dateGarde;
+    var typeConvention = req.params.typeConvention;
+
+    var all = "tous"
+
+    var areEqual = all.toUpperCase() === typeConvention.toUpperCase();
+
+    if(!areEqual){
+    pharmacy.find({nomCommune:nomCommune,dateGarde:dateGarde,caisseConventionnee:typeConvention},'-_id nomPrenomPharmacien heure adresse numeroTelephone facebookUrl lienSurCarte caisseConventionnee dateGarde',
+    function(err,pharmacies){
+        res.status(200).json(pharmacies);
+        });
+    }
+        else{
+            pharmacy.find({nomCommune:nomCommune,dateGarde:dateGarde},'-_id nomPrenomPharmacien heure adresse numeroTelephone facebookUrl lienSurCarte caisseConventionnee dateGarde',
+            function(err,pharmacies){
+                res.status(200).json(pharmacies);
+                });
+        }
+
+});
+
+
+
 app.get("/pharmacies",function(req,res){
     pharmacy.find({},'-_id nomPrenomPharmacien heure adresse numeroTelephone facebookUrl lienSurCarte caisseConventionnee dateGarde',
     function(err,pharmacie){
