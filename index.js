@@ -76,6 +76,8 @@ app.post('/users',(req,res,next)=>{
     });  
 });
 
+
+
 app.post("/pharmacy",function(req,res){
 var Pharmacy = new pharmacy({
     _id:new mongoose.Types.ObjectId(),
@@ -132,6 +134,20 @@ app.get("/login/:useremail/:pwd",(req,res,next)=>{
     });
 });
 
+app.get("/getUser/:useremail/:pwd",(req,res,next)=>{
+    var useremail = req.params.useremail;
+    var pwd = req.params.pwd;
+    user.findOne({email:useremail,password:pwd},function(error,user){
+        if(error){
+            res.status(500).json(null);
+        }else{
+            res.status(200).json(user);
+        }
+  });
+});
+
+
+
 app.get("/communes",function(req,res){
     commune.find({}).select('-_id').exec(function(err,communes){
         res.status(200).json(communes);
@@ -182,8 +198,6 @@ app.get("/Pharmacy/:nomCommune/:dateGarde/:typeConvention",function(req,res){
         }
 
 });
-
-
 
 app.get("/pharmacies",function(req,res){
     pharmacy.find({},'-_id nomPrenomPharmacien heure adresse numeroTelephone facebookUrl lienSurCarte caisseConventionnee dateGarde',
