@@ -217,8 +217,9 @@ app.post('/upload-avatar', async (req, res) => {
     try {
         if(!req.files) {
             res.send({
-                status: false,
-                message: 'No file uploaded'
+                result: false,
+                massage: 'No file uploaded',
+                name:'no Image'
             });
         } else {
             //Use the name of the input field (i.e. "avatar") to retrieve the uploaded file
@@ -231,11 +232,12 @@ app.post('/upload-avatar', async (req, res) => {
             res.send({
                 status: true,
                 message: 'File is uploaded',
-                data: {
+                name: avatar.name
+                /*data: {
                     name: avatar.name,
                     mimetype: avatar.mimetype,
                     size: avatar.size
-                }
+                }*/
             });
         }
     } catch (err) {
