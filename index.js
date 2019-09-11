@@ -2,9 +2,11 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cryptage = require('./cryptage/cryptage');
+
 const user = require('./models/user');
 const commune = require('./models/commune');
 const pharmacy = require('./models/pharmacy');
+const command = require('./models/commande');
 
 const fileUpload = require('express-fileupload');
 const cors = require('cors');
@@ -33,7 +35,6 @@ port = process.env.PORT || 3000
 mongoose.connect('mongodb+srv://mustapha:mustaphadebbih@pharmacy-dz3jk.mongodb.net/test?retryWrites=true&w=majority',{useNewUrlParser:true});
 
 //routes
-
 
 app.post('/users',(req,res,next)=>{
    
@@ -76,8 +77,6 @@ app.post('/users',(req,res,next)=>{
     });  
 });
 
-
-
 app.post("/pharmacy",function(req,res){
 var Pharmacy = new pharmacy({
     _id:new mongoose.Types.ObjectId(),
@@ -94,6 +93,43 @@ Pharmacy.save().then(result=>{
     console.log(result);
     res.status(200).json(result);
 }).catch(err=>console.log(err));
+});
+
+app.post("/command",function(req,res){
+    var Command = new command({
+        _id:new mongoose.Types.ObjectId(),
+        nomCmd:req.body.nomCmd,
+        userEmail:req.body.userEmail,
+        cmdState:req.body.cmdState,
+        imgName:req.body.imgName,
+        dateLancement:req.body.dateLancement
+    });
+    Command.save().then(result=>{
+        console.log(result);
+        res.status(200).json({"result":true,"message":"the command was created successfully"});
+    })
+   .catch(err=>{
+        console.log(err);
+        res.status(500).json({"result":false,"message":"Something went wrong"});
+    });
+});
+
+app.get("/command/userEmail/:userEmail",function(req,res){
+    var userEmail = req.params.userEmail;
+
+    command.find({userEmail:userEmail},'-_id ',
+    function(err,cmd){
+    res.status(200).json(cmd);
+    });
+});
+
+app.get("/command/nomCmd/:nomCmd",function(req,res){
+    var nomCmd = req.params.nomCmd;
+
+    command.find({nomCmd:nomCmd},'-_id ',
+    function(err,cmd){
+    res.status(200).json(cmd);
+    });
 });
 
 app.get('/updatePassword/:useremail/:lastpassword/:newpassword',(req,res,next)=>{
@@ -146,8 +182,6 @@ app.get("/getUser/:useremail/:pwd",(req,res,next)=>{
   });
 });
 
-
-
 app.get("/communes",function(req,res){
     commune.find({}).select('-_id').exec(function(err,communes){
         res.status(200).json(communes);
@@ -172,8 +206,6 @@ app.get("/Communes/:codeWilaya",function(req,res){
     res.status(200).json(communes);
     });
 });
-
-
 
 app.get("/Pharmacy/:nomCommune/:dateGarde/:typeConvention",function(req,res){
     var nomCommune = req.params.nomCommune;
