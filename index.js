@@ -231,6 +231,33 @@ app.get("/Pharmacy/:nomCommune/:dateGarde/:typeConvention",function(req,res){
 
 });
 
+
+
+app.get("/PharmacySansDateGard/:nomCommune/:typeConvention",function(req,res){
+    var nomCommune = req.params.nomCommune;
+   
+    var typeConvention = req.params.typeConvention;
+
+    var all = "tous"
+
+    var areEqual = all.toUpperCase() === typeConvention.toUpperCase();
+
+    if(!areEqual){
+    pharmacy.find({nomCommune:nomCommune,caisseConventionnee:typeConvention},'-_id nomPrenomPharmacien heure adresse numeroTelephone facebookUrl lienSurCarte caisseConventionnee dateGarde',
+    function(err,pharmacies){
+        res.status(200).json(pharmacies);
+        });
+    }
+        else{
+            pharmacy.find({nomCommune:nomCommune},'-_id nomPrenomPharmacien heure adresse numeroTelephone facebookUrl lienSurCarte caisseConventionnee dateGarde',
+            function(err,pharmacies){
+                res.status(200).json(pharmacies);
+                });
+        }
+
+});
+
+
 app.get("/pharmacies",function(req,res){
     pharmacy.find({},'-_id nomPrenomPharmacien heure adresse numeroTelephone facebookUrl lienSurCarte caisseConventionnee dateGarde',
     function(err,pharmacie){
@@ -286,6 +313,10 @@ app.get('/sendimg/:name', function(req,res){
         res.status(401).send('Authorization required!');
     }*/
 });
+
+
+
+
 
 app.listen(port,function(){
     console.log("your are listening on port 3000");
