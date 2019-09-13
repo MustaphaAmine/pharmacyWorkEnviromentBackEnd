@@ -27,11 +27,7 @@ app.use(cors());
 app.use(morgan('dev'));
 
 port = process.env.PORT || 3000
-//connect to mongodb
-//mongoose.connect('mongodb+srv://mustapha:mustaphadebbih@easypharma-uv4ka.mongodb.net/test?retryWrites=true',{useNewUrlParser:true});
 
-//New Connection
-// mongodb+srv://mustapha:<password>@pharmacy-dz3jk.mongodb.net/test?retryWrites=true&w=majority
 mongoose.connect('mongodb+srv://mustapha:mustaphadebbih@pharmacy-dz3jk.mongodb.net/test?retryWrites=true&w=majority',{useNewUrlParser:true});
 
 //routes
@@ -258,6 +254,18 @@ app.get("/PharmacySansDateGard/:nomCommune/:typeConvention",function(req,res){
 });
 
 
+app.post("/commune",function(req,res){
+    var Commune = new commune({
+        _id:new mongoose.Types.ObjectId(),
+        nomCommune:req.body.nomCommune,
+        codeWilaya:req.body.codeWilaya,
+    });
+    Commune.save().then(result=>{
+        console.log(result);
+        res.status(200).json(result);
+    }).catch(err=>console.log(err));
+    });
+    
 app.get("/pharmacies",function(req,res){
     pharmacy.find({},'-_id nomPrenomPharmacien heure adresse numeroTelephone facebookUrl lienSurCarte caisseConventionnee dateGarde',
     function(err,pharmacie){
